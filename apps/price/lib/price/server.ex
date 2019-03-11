@@ -64,8 +64,9 @@ defmodule Price.Server do
   end
 
   def price_loop(pid) do
-    Process.sleep(100)
-    delta = Enum.random(5..5) / 1000
+    Process.sleep(500)
+    delta = :rand.normal(0, 0.04)
+
     GenServer.cast(pid, {:delta, delta})
     __MODULE__.price_loop(pid)
   end

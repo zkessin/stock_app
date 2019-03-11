@@ -20,6 +20,7 @@
 
     </div>
     <div id="error"></div>
+    <div id="count"></div>
     <h4>Server Version <span id="version"></span></h4>
     <br>
     <h6> Disclaimer: This is a demo application, if you take my advice on stocks you will probably loose all your money!</h6>

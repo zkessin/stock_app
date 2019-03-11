@@ -2,12 +2,11 @@ defmodule WebApp.SocketHandler do
   @behaviour :cowboy_websocket
 
   def init(request, _state) do
-    state = %{registry_key: request.path}
-    {:cowboy_websocket, request, state}
+    state = %{registry_key: request.path, count: 0}
+    {:cowboy_websocket, request, state, %{idle_timeout: :infinity}}
   end
 
   def websocket_init(state) do
-    IO.inspect({state, self()}, libel: "State")
     Price.Server.register(:enron)
     Price.Server.register(:lex_corp)
     Price.Server.register(:acme)
@@ -23,19 +22,18 @@ defmodule WebApp.SocketHandler do
     {:reply, {:text, "ok"}, state}
   end
 
-  def websocket_info({:update, stock, company, price, vsn}, state) do
-    info =
-      Jason.encode!(%{
-        "stock" => stock,
-        "company" => company,
-        "price" => :erlang.float_to_binary(price, decimals: 2),
-        "version" => vsn
-      })
+  def websocket_info({:update, stock, company, price, vsn}, state = %{count: count}) do
+    block = %{
+      "stock" => stock,
+      "company" => company,
+      "price" => :erlang.float_to_binary(price, decimals: 2),
+      "version" => vsn,
+      "count" => count
+    }
 
-    {:reply, {:text, info}, state}
-  end
+    #    :io.format("~p ->JSON: ~p~n", [self(), block])
+    {:ok, info} = Jason.encode(block)
 
-  def websocket_info(info, state) do
-    {:reply, {:text, info}, state}
+    {:reply, {:text, [info, "\n"]}, %{state | count: count + 1}}
   end
 end
