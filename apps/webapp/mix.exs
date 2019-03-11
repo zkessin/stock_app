@@ -20,7 +20,7 @@ defmodule Webapp.MixProject do
     [
       mod: {WebApp, []},
 
-      extra_applications: [:logger]
+      extra_applications: [:logger, :price]
     ]
   end
 

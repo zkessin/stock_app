@@ -10,10 +10,10 @@ defmodule Price.Application do
     children = [
       # Starts a worker by calling: Price.Worker.start_link(arg)
       # {Price.Worker, arg}
-      Supervisor.child_spec({Price.Server, :enron}, id: :enron),
-      Supervisor.child_spec({Price.Server, :barings_bank}, id: :barings_bank),
-      Supervisor.child_spec({Price.Server, :lex_corp}, id: :lex_corp),
-      Supervisor.child_spec({Price.Server, :acme}, id: :acme)
+      Supervisor.child_spec({Price.Server, [:enron, "Enron"]}, id: :enron),
+      Supervisor.child_spec({Price.Server, [:barings_bank, "Barings Bank"]}, id: :barings_bank),
+      Supervisor.child_spec({Price.Server, [:lex_corp, "Lex Corp"]}, id: :lex_corp),
+      Supervisor.child_spec({Price.Server, [:acme, "Acme"]}, id: :acme)
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
