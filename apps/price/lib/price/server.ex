@@ -11,6 +11,10 @@ defmodule Price.Server do
     field(:delta, pid(), enforce: true)
   end
 
+  def version do
+    1
+  end
+
   def register(stock) do
     GenServer.call(stock, {:register, self()})
   end
@@ -42,7 +46,7 @@ defmodule Price.Server do
         state = %__MODULE__{listeners: listeners, name: name, price: price, stock: stock}
       ) do
     newprice = price + diff
-    for p <- listeners, do: send(p, {:update, stock, name, newprice})
+    for p <- listeners, do: send(p, {:update, stock, name, newprice, version()})
     {:noreply, %__MODULE__{state | price: newprice}}
   end
 
@@ -61,7 +65,7 @@ defmodule Price.Server do
 
   def price_loop(pid) do
     Process.sleep(100)
-    delta = Enum.random(-5..5)
+    delta = Enum.random(5..5) / 1000
     GenServer.cast(pid, {:delta, delta})
     __MODULE__.price_loop(pid)
   end

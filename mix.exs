@@ -20,7 +20,8 @@ defmodule StockApp.MixProject do
       {:typed_struct, "~> 0.1.4"},
       {:dialyxir, "~> 0.5.1"},
       {:propcheck, "~> 1.1"},
-      {:cowboy, "~> 2.6"}
+      {:cowboy, "~> 2.6"},
+      {:recon_ex, "~> 0.9.1"}
     ]
   end
 end

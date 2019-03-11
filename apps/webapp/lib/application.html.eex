@@ -2,19 +2,26 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <script type="application/javascript" defer="defer" src="js/application.js"></script>
+    <script defer="defer" src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script defer="defer" src="https://underscorejs.org/underscore-min.js"></script>
+    <script defer="defer" src="js/jquery.simple.websocket.js"></script>
+    <script type="application/javascript" defer="defer" src="js/static.js"></script>
     <title>
-      My WebSocket App
+      Stock Application
     </title>
   </head>
   <body>
-    <main id="main"></main>
+    <h1> Test Stock Application</h1>
+    <div id="main">
+      <div id="enron"></div>
+      <div id="barings_bank"></div>
+      <div id="acme"></div>
+      <div id="lex_corp"></div>
+
+    </div>
+    <div id="error"></div>
+    <h4>Server Version <span id="version"></span></h4>
     <br>
-    <form>
-      <input id="message" type="text">
-      <br>
-      <br>
-      <input type="submit" value="send" id="button">
-    </form>
+    <h6> Disclaimer: This is a demo application, if you take my advice on stocks you will probably loose all your money!</h6>
   </body>
 </html>

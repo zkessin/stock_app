@@ -1,18 +1,35 @@
-defmodule Webapp do
-  @moduledoc """
-  Documentation for Webapp.
-  """
+defmodule WebApp do
+  use Application
 
-  @doc """
-  Hello world.
+  def start(_type, _args) do
+    children = [
+      Plug.Cowboy.child_spec(
+        scheme: :http,
+        plug: WebApp.Router,
+        options: [
+          dispatch: dispatch(),
+          port: 4001
+        ]
+      ),
+      Registry.child_spec(
+        keys: :duplicate,
+        name: Registry.WebApp
+      )
+    ]
 
-  ## Examples
+    opts = [strategy: :one_for_one, name: WebApp.Application]
+    Supervisor.start_link(children, opts)
+  end
 
-      iex> Webapp.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  defp dispatch do
+    [
+      {:_,
+       [
+         {"/assets/[...]", :cowboy_static, {:priv_dir, :webapp, "static/assets"}},
+         {"/js/[...]", :cowboy_static, {:priv_dir, :webapp, "static/js"}},
+         {"/ws/[...]", WebApp.SocketHandler, []},
+         {:_, Plug.Cowboy.Handler, {WebApp.Router, []}}
+       ]}
+    ]
   end
 end
