@@ -19,7 +19,8 @@ defmodule StockApp.MixProject do
       {:distillery, "~> 2.0"},
       {:typed_struct, "~> 0.1.4"},
       {:dialyxir, "~> 0.5.1"},
-      {:propcheck, "~> 1.1"}
+      {:propcheck, "~> 1.1"},
+      {:cowboy, "~> 2.6"}
     ]
   end
 end
