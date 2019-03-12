@@ -1,12 +1,13 @@
 defmodule Price.Server do
   use TypedStruct
   use GenServer
+  alias :gb_sets, as: Set
 
   @typedoc "Internal Structure of the application"
   typedstruct do
     field(:stock, atom(), enforce: true)
     field(:name, String.t(), enforce: true)
-    field(:listeners, [pid()], default: [], enforce: true)
+    field(:listeners, Sets.set(pid()), enforce: true)
     field(:price, integer(), enforce: true)
     field(:delta, pid(), enforce: true)
   end
@@ -27,7 +28,7 @@ defmodule Price.Server do
   def init([stock, name]) do
     Process.flag(:trap_exit, true)
     delta = spawn_link(__MODULE__, :price_loop, [self()])
-    {:ok, %__MODULE__{stock: stock, name: name, listeners: [], price: 100, delta: delta}}
+    {:ok, %__MODULE__{stock: stock, name: name, listeners: Set.empty(), price: 100, delta: delta}}
   end
 
   @impl true
@@ -37,7 +38,7 @@ defmodule Price.Server do
         state = %__MODULE__{listeners: listeners, price: price}
       ) do
     Process.monitor(pid)
-    {:reply, {:listen, price}, %__MODULE__{state | listeners: [pid | listeners]}}
+    {:reply, {:listen, price}, %__MODULE__{state | listeners: Set.add(pid, listeners)}}
   end
 
   @impl true
@@ -46,7 +47,16 @@ defmodule Price.Server do
         state = %__MODULE__{listeners: listeners, name: name, price: price, stock: stock}
       ) do
     newprice = price + diff
-    for p <- listeners, do: send(p, {:update, stock, name, newprice, version()})
+
+    Set.fold(
+      fn p, _ ->
+        send(p, {:update, stock, name, newprice, version()})
+        :ok
+      end,
+      :ok,
+      listeners
+    )
+
     {:noreply, %__MODULE__{state | price: newprice}}
   end
 
@@ -60,7 +70,27 @@ defmodule Price.Server do
         {:DOWN, _montior_ref, _type, pid, _exit_reason},
         state = %__MODULE__{listeners: listeners}
       ) do
-    {:noreply, %__MODULE__{state | listeners: List.delete(listeners, pid)}}
+    {:noreply, %__MODULE__{state | listeners: Set.delete(pid, listeners)}}
+  end
+
+  @impl true
+  def code_change(old_version, state = %__MODULE__{listeners: listeners}, _)
+      when is_list(listeners) do
+    :io.format(
+      "////////////////////////////////////////////////////////////////////////////////~n"
+    )
+
+    :io.format("Upgrade from old_version ~p state ~p ", [old_version, state])
+    {:ok, %__MODULE__{state | listeners: Sets.from_list(listeners)}}
+  end
+
+  def code_change(old_version, state, _) do
+    :io.format(
+      "********************************************************************************~n"
+    )
+
+    :io.format("Upgrade Miss from old_version ~p state ~p ~n", [old_version, state])
+    {:ok, state}
   end
 
   def price_loop(pid) do
