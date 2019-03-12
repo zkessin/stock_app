@@ -19,8 +19,7 @@ defmodule Webapp.MixProject do
   def application do
     [
       mod: {WebApp, []},
-
-      extra_applications: [:logger, :price]
+      extra_applications: [:logger, :price, :recon_ex, :runtime_tools, :wx, :observer]
     ]
   end
 
@@ -31,7 +30,6 @@ defmodule Webapp.MixProject do
       {:plug, "~> 1.7"},
       {:plug_cowboy, "~> 2.0"},
       {:jason, "~> 1.1"}
-
     ]
   end
 end
