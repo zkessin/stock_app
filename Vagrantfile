@@ -19,6 +19,7 @@ Vagrant.configure("2") do |config|
   config.ssh.forward_x11 = true
 
   config.vm.network "public_network", bridge: ["eno1","wlp58s0", "eth0", "en0", "en0: Wi-Fi (AirPort)"]
+  config.vm.network "forwarded_port", guest: 4001, host: 8080
 
   config.vm.provider "virtualbox" do |vb|
     vb.gui = false
