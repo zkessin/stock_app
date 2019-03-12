@@ -8,7 +8,7 @@ echo "------------------------------ Install various linux tools"
 apt-get install --yes --quiet tmux multitail\
     make npm htop wget inotify-tools\
     build-essential zip unzip\
-    git curl gcc g++ vim
+    git curl gcc g++ vim make
 
 echo 16384 | tee /proc/sys/fs/inotify/max_user_watches
 
@@ -16,7 +16,7 @@ echo "------------------------------ Installing Erlang Solutions repo"
 wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
 
 dpkg -i erlang-solutions_1.0_all.deb
-
+rm erlang-solutions_1.0_all.deb
 apt-get update --quiet --yes
 echo "------------------------------ Installing Erlang & Elixir"
 apt-get install --yes --quiet erlang erlang-base-hipe elixir
