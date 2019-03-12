@@ -1,13 +1,21 @@
 /* TEST */
+var url = new URL('/ws/stock', window.location.href);
+
+url.protocol = url.protocol.replace('http', 'ws');
+console.log(url);
 
 var template =  _.template("<b><%- company %></b> $<%-price %><br/>")
-$(function(){
+var setup = function(){
+    console.info("SETUP");
     var count = 0;
-    var webSocket = $.simpleWebSocket({ url: 'ws://127.0.0.1:4001/ws/stock' });
-    window.setInterval(function()
+    var webSocket = $.simpleWebSocket({ url: url.href });
+    var interval = window.setInterval(function()
                        {
                            if(webSocket.isConnected()== false) {
-                               $("#error").html("ERROR NO CONNECTION, count="+ count );
+                               $("#error")
+                                   .html("ERROR NO CONNECTION" )
+                                   .append($("<button>Restart</button>").click(setup));
+                               clearInterval(interval);
 
                            } else{
                                $("#error").html("");
@@ -18,6 +26,6 @@ $(function(){
         $("div#"+message.stock).html(template(message))
         $("span#version").html(message.version)
         count = count+1
-        $("div#count").html(count)
     })
-});
+};
+$(setup);
