@@ -13,7 +13,7 @@ defmodule Price.Server do
   end
 
   def version do
-    1
+    2
   end
 
   def register(stock) do
@@ -81,7 +81,7 @@ defmodule Price.Server do
     )
 
     :io.format("Upgrade from old_version ~p state ~p ", [old_version, state])
-    {:ok, %__MODULE__{state | listeners: Sets.from_list(listeners)}}
+    {:ok, %__MODULE__{state | listeners: Set.from_list(listeners)}}
   end
 
   def code_change(old_version, state, _) do
