@@ -11,29 +11,29 @@ defmodule WebApp.SocketHandler do
     Price.Server.register(:lex_corp)
     Price.Server.register(:acme)
     Price.Server.register(:barings_bank)
-
-    Registry.WebApp
-    |> Registry.register(state.registry_key, {})
-
+    Registry.register(Registry.WebApp, state.registry_key, {})
     {:ok, state}
+  end
+
+  def read_file(file) do
+    {:ok, Data} = File.read(file)
+    Data
+  end
+
+  def websocket_info({:update, stock, company, price, vsn}, state = %{count: count}) do
+    {:ok, info} =
+      Jason.encode(%{
+        "stock" => stock,
+        "company" => company,
+        "price" => :erlang.float_to_binary(price, decimals: 2),
+        "version" => vsn,
+        "count" => count
+      })
+
+    {:reply, {:text, [info, "\n"]}, %{state | count: count + 1}}
   end
 
   def websocket_handle({:text, _json}, state) do
     {:reply, {:text, "ok"}, state}
-  end
-
-  def websocket_info({:update, stock, company, price, vsn}, state = %{count: count}) do
-    block = %{
-      "stock" => stock,
-      "company" => company,
-      "price" => :erlang.float_to_binary(price, decimals: 2),
-      "version" => vsn,
-      "count" => count
-    }
-
-    #    :io.format("~p ->JSON: ~p~n", [self(), block])
-    {:ok, info} = Jason.encode(block)
-
-    {:reply, {:text, [info, "\n"]}, %{state | count: count + 1}}
   end
 end

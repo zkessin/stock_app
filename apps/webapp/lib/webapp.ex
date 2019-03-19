@@ -8,7 +8,7 @@ defmodule WebApp do
         plug: WebApp.Router,
         options: [
           dispatch: dispatch(),
-          port: 4001
+          port: 80
         ]
       ),
       Registry.child_spec(

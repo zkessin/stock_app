@@ -2,7 +2,7 @@ defmodule Price.Server do
   use TypedStruct
   use GenServer
   alias :gb_sets, as: Set
-
+  @vsn "0.2.0"
   @typedoc "Internal Structure of the application"
   typedstruct do
     field(:stock, atom(), enforce: true)
@@ -13,7 +13,7 @@ defmodule Price.Server do
   end
 
   def version do
-    2
+    @vsn
   end
 
   def register(stock) do
