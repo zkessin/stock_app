@@ -74,23 +74,12 @@ defmodule Price.Server do
   end
 
   @impl true
-  def code_change(old_version, state = %__MODULE__{listeners: listeners}, _)
-      when is_list(listeners) do
-    :io.format(
-      "////////////////////////////////////////////////////////////////////////////////~n"
-    )
-
-    :io.format("Upgrade from old_version ~p state ~p ", [old_version, state])
+  def code_change("0.1.0", state = %__MODULE__{listeners: listeners}, _) do
     {:ok, %__MODULE__{state | listeners: Set.from_list(listeners)}}
   end
 
-  def code_change(old_version, state, _) do
-    :io.format(
-      "********************************************************************************~n"
-    )
-
-    :io.format("Upgrade Miss from old_version ~p state ~p ~n", [old_version, state])
-    {:ok, state}
+  def code_change({:down, "0.1.0"}, state = %__MODULE__{listeners: listeners}, _) do
+    {:ok, %__MODULE__{state | listeners: Set.to_list(listeners)}}
   end
 
   def price_loop(pid) do
