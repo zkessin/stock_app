@@ -19,6 +19,7 @@ defmodule Webapp.MixProject do
   def application do
     [
       mod: {WebApp, []},
+      env: [facebook_api_key: "ABCDEFGHIJKLMNOP*********************************"],
       extra_applications: [:logger, :price, :recon_ex, :runtime_tools, :wx, :observer]
     ]
   end
